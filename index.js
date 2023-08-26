@@ -1,8 +1,12 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
+import routes from './routes/index.js';
+import './utils/jwt.js';
 
-dotenv.config();
+mongoose.connect(process.env.DB_URL);
+mongoose.set('sanitizeFilter', true);
 
 const app = express();
 
@@ -35,6 +39,8 @@ app.use(express.json());
 app.use((err, req, res, next) => {
   res.status(400).json({ success: false, message: '格式錯誤' });
 });
+
+routes(app);
 
 app.all('*', (req, res) => {
   res.status(400).json({ success: false, message: '找不到' });
